@@ -11,4 +11,5 @@ Javascript Completion for Sublime Text 3/4. Work in file js, jsx, ts, and tsx.
 - logic
 - variable
 - class
-- try/catch, switch/case, fetch
+- console
+- try/catch, switch/case, fetch, json, timer, module/import

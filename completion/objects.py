@@ -1,0 +1,67 @@
+import sublime
+
+objects = [
+	sublime.CompletionItem(
+		"object",
+		annotation="Object",
+		completion="{}",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_SNIPPET
+	),
+	sublime.CompletionItem(
+		"assign",
+		annotation="Object",
+		completion="Object.assign($0, value)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
+		"create",
+		annotation="Object",
+		completion="Object.create({$0})",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
+		"entries",
+		annotation="Object",
+		completion="Object.entries($0)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
+		"freeze",
+		annotation="Object",
+		completion="Object.freeze($0)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
+		"fromentries",
+		annotation="Object",
+		completion="Object.fromEntries($0)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
+		"keys",
+		annotation="Object",
+		completion="Object.keys($0)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
+		"seal",
+		annotation="Object",
+		completion="Object.seal($0)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
+		"defineproperty",
+		annotation="Object",
+		completion="Object.defineProperty($0, 'property', {\n\tvalue: 1,\n\twritable: false\n});",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+]
