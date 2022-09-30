@@ -23,13 +23,6 @@ string = [
 		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
-		"includes",
-		annotation="string",
-		completion="includes(\"$0\")",
-		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
-	),
-	sublime.CompletionItem(
 		"localecompare",
 		annotation="string",
 		completion="localeCompare($0)",

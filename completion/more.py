@@ -2,6 +2,13 @@ import sublime
 
 more = [
 	sublime.CompletionItem(
+		"includes",
+		annotation="array|string",
+		completion="includes($0)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
 		"switch",
 		annotation="switch",
 		completion="switch(variable$0){\n\tcase 0:\n\t\tbreak;\n\tdefault:\n\t\treturn;\n}",
@@ -124,6 +131,13 @@ more = [
 		"import",
 		annotation="import es6",
 		completion="import name from '$0';",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
+		"export",
+		annotation="export es6",
+		completion="export default name$0;",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 		kind=sublime.KIND_FUNCTION
 	),

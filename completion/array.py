@@ -51,13 +51,6 @@ array = [
 		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
-		"includes",
-		annotation="array",
-		completion="includes($0)",
-		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
-	),
-	sublime.CompletionItem(
 		"join",
 		annotation="array",
 		completion="join($0)",
