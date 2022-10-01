@@ -8,6 +8,7 @@ from .completion.array import array
 
 class JavascriptCommand(sublime_plugin.EventListener):
 	folder = ''
+	path = ''
 	def on_query_completions(self, view, prefix, locations):
 		source = [
 			view.match_selector(locations[0], "source.js"),
@@ -27,14 +28,32 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		out 		= []
 		target 		= []
 		in_line  	= line.split('\n')
-		path 		= sublime.active_window().folders()
+		win 		= sublime.active_window()
+		path 		= win.folders()
+		current 	= win.active_view().file_name()
+		active 		= ''
+
+		# suggest import
+		if len(path) and (prefix == 'from' or prefix == 'require'):
+			self.path 	= path[0]
+			self.full_name = current
+
+			# get folder on active views
+			split_filename = current.split('\\')[:-1]
+			for x in split_filename:
+				if active == '':
+					active = x
+				else:
+					active = active + '\\' + x
+
+			self.active = active
+
+			if active != '':
+				dev 	= self.reading_package_json(self.path, prefix)
+				file 	= self.import_file(self.path, prefix)
+				target 	= file + dev
 
 		# not ctrl+space
-		if (prefix == 'from' or prefix == 'require') and len(path):
-			file 	= self.import_file(path[0], prefix)
-			dev 	= self.reading_package_json(path[0], prefix)
-			target 	= file + dev
-
 		if prefix != '':
 			target = target + completions + array + string + console
 		else:
@@ -46,12 +65,12 @@ class JavascriptCommand(sublime_plugin.EventListener):
 			target = bdd + target
 
 		for comp in target:
-			if comp.trigger.find(r'{prefix}'):
+			if comp and comp.trigger.find(r'{prefix}'):
 				out.append(comp)
 
 		return out
 
-	def import_file(self, path, prefix):
+	def import_file(self, path, prefix, active = ''):
 		self.out = []
 
 		def search(value):
@@ -62,23 +81,28 @@ class JavascriptCommand(sublime_plugin.EventListener):
 				return value
 
 		def update(value):
-			path_prefix = "./{value}".format(value=value)
-			if self.folder != '':
-				path_prefix = './{folder}/{value}'.format(folder=self.folder, value=value).replace('//', '/')
+			full_folder = self.path + '\\' + self.folder.replace('/', '\\') + value
+			relative = os.path.relpath(full_folder, self.active).replace('\\', '/')
+			
+			if full_folder == self.full_name:
+				return None
+
+			if not '../' in relative:
+				relative = './' + relative
 
 			if prefix == 'require':
 				return sublime.CompletionItem(
 					prefix,
-					annotation="" + path_prefix,
-					completion="require('{path_prefix}');".format(path_prefix=path_prefix),
+					annotation="" + relative,
+					completion="require('{relative}');".format(relative=relative),
 					completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 					kind=sublime.KIND_VARIABLE
 				)
 
 			return sublime.CompletionItem(
 				prefix,
-				annotation="" + path_prefix,
-				completion="from '{path_prefix}';".format(path_prefix=path_prefix),
+				annotation="" + relative,
+				completion="from '{relative}';".format(relative=relative),
 				completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 				kind=sublime.KIND_VARIABLE
 			)
