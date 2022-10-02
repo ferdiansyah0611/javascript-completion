@@ -5,6 +5,7 @@ from .completions import completions
 from .completion.string import string
 from .completion.console import console
 from .completion.array import array
+from .completion.keyword import keyword
 
 class JavascriptCommand(sublime_plugin.EventListener):
 	folder = ''
@@ -29,12 +30,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		last_line 	= in_line[-1]
 
 		# suggest import
-		allow_suggest = [
-			view.match_selector(locations[0], "keyword.control.import-export.js"),
-			view.match_selector(locations[0], "support.function.node.js")
-		]
-
-		if len(path) and True in allow_suggest:
+		if len(path) and (prefix == 'import' or prefix == 'require'):
 			self.path 	= path[0]
 			self.full_name = current
 
@@ -55,7 +51,14 @@ class JavascriptCommand(sublime_plugin.EventListener):
 
 		# not ctrl+space
 		if prefix != '':
-			target = target + completions + array + string + console
+			target = target + keyword + completions + console
+			# typescript
+			group_source = source.group()
+			if group_source == '.ts' or group_source == '.tsx':
+				from .completion.typescript import typescript
+				target = typescript + target
+
+		# end with dot
 		elif last_line.endswith('.'):
 			name_variable = last_line.split(' ')[-1][:-1]
 			if name_variable.startswith('['):
@@ -145,7 +148,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 						]
 						break
 		else:
-			target = completions
+			target = keyword + completions
 
 		# bdd
 		if '// bdd' in in_line[0:2]:

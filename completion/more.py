@@ -27,35 +27,35 @@ more = [
 		annotation="alert",
 		completion="alert($0)",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_SNIPPET
+		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
 		"confirm",
 		annotation="confirm",
 		completion="confirm($0)",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_SNIPPET
+		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
 		"prompt",
 		annotation="prompt",
 		completion="prompt($0)",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_SNIPPET
+		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
 		"json",
 		annotation="JSON.parse",
 		completion="JSON.parse(object$0)",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_SNIPPET
+		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
 		"json",
 		annotation="JSON.stringify",
 		completion="JSON.stringify(object$0)",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_SNIPPET
+		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
 		"try",
@@ -76,14 +76,14 @@ more = [
 		annotation="setInterval",
 		completion="setInterval(() => {\n\t$0\n})",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_SNIPPET
+		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
 		"settimeout",
 		annotation="setTimeout",
 		completion="setTimeout(() => {\n\t$0\n})",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_SNIPPET
+		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
 		"fetch",
@@ -107,38 +107,31 @@ more = [
 		kind=sublime.KIND_VARIABLE
 	),
 	sublime.CompletionItem(
-		"debug",
-		annotation="debugger",
-		completion="debugger",
-		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_VARIABLE
-	),
-	sublime.CompletionItem(
 		"require",
 		annotation="require('$0');",
 		completion="var name = require('$0');",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
+		kind=sublime.KIND_SNIPPET
 	),
 	sublime.CompletionItem(
 		"module",
 		annotation="module.exports",
 		completion="module.exports = $0;",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
+		kind=sublime.KIND_SNIPPET
 	),
 	sublime.CompletionItem(
 		"import",
 		annotation="import es6",
 		completion="import name from '$0';",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
+		kind=sublime.KIND_SNIPPET
 	),
 	sublime.CompletionItem(
 		"export",
 		annotation="export es6",
 		completion="export default name$0;",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
+		kind=sublime.KIND_SNIPPET
 	),
 ]
