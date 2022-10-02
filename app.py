@@ -11,14 +11,19 @@ class JavascriptCommand(sublime_plugin.EventListener):
 	folder = ''
 	path = ''
 	def on_query_completions(self, view, prefix, locations):
+		source 		= [
+			view.match_selector(locations[0], "source.js"),
+			view.match_selector(locations[0], "source.jsx"),
+			view.match_selector(locations[0], "source.ts"),
+			view.match_selector(locations[0], "source.tsx"),
+			view.match_selector(locations[0], "source.mjs")
+		]
+
+		if not True in source:
+			return []
 
 		win 		= sublime.active_window()
 		current 	= win.active_view().file_name()
-		source 		= re.search(r"\.js$|\.jsx$|\.ts$|\.tsx$|\.mjs$", current)
-
-		if source == None:
-			return []
-
 		path 		= win.folders()
 		prefix 		= prefix.lower()
 		cursor 		= locations[0] - len(prefix)
@@ -53,8 +58,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		if prefix != '':
 			target = target + keyword + completions + console
 			# typescript
-			group_source = source.group()
-			if group_source == '.ts' or group_source == '.tsx':
+			if source[2] == True or source[3] == True:
 				from .completion.typescript import typescript
 				target = typescript + target
 
