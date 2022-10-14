@@ -72,18 +72,37 @@ class JavascriptCommand(sublime_plugin.EventListener):
 			elif name_variable.startswith("{"):
 				pass
 			else:
+				assign = []
 				if name_variable:
 					for x in range(0, len(in_line)):
+						# check value assign
+						expect = re.search(r"{name}\.[a-zA-Z]+".format(name=name_variable), in_line[x])
+						if expect:
+							value = expect.group()
+							# unique completion
+							is_allow = True
+							for y in assign:
+								if y.completion == value:
+									is_allow = False
+							
+							if is_allow:
+								assign = assign + [
+									sublime.CompletionItem(
+										value,
+										annotation=value,
+										completion=value,
+										completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+										kind=sublime.KIND_VARIABLE
+									)
+								]
 						# string
-						if re.search(r"(var|let|const) {name} = '".format(name=name_variable), in_line[x]):
+						if re.search(r"{name} = '".format(name=name_variable), in_line[x]):
 							target = string
-							break
 						# array
-						if re.search(r"(var|let|const) {name} = \[".format(name=name_variable), in_line[x]):
+						if re.search(r"{name} = \[".format(name=name_variable), in_line[x]):
 							target = array
-							break
 						# object
-						if re.search(r"(var|let|const) {name} = {t}".format(name=name_variable, t='{'), in_line[x]):
+						if re.search(r"{name} = {t}".format(name=name_variable, t='{'), in_line[x]):
 							def recursive(in_line, x, start):
 								try:
 									if x > len(in_line): return
@@ -131,8 +150,6 @@ class JavascriptCommand(sublime_plugin.EventListener):
 							if result and len(result):
 								out.extend(result)
 
-							break
-
 						# function
 						if re.search(r"function {name}\(".format(name=name_variable), in_line[x]):
 							target = [
@@ -151,7 +168,8 @@ class JavascriptCommand(sublime_plugin.EventListener):
 									kind=sublime.KIND_VARIABLE
 								),
 							]
-							break
+				
+				target = assign + target
 		else:
 			target = keyword + completions
 
