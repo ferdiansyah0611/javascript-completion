@@ -73,6 +73,12 @@ class JavascriptCommand(sublime_plugin.EventListener):
 				pass
 			else:
 				assign = []
+				checked = re.search(r"[a-zA-Z0-0]+$", name_variable)
+				if checked == None:
+					return
+				if checked:
+					name_variable = checked.group()
+
 				if name_variable:
 					for x in range(0, len(in_line)):
 						# check value assign
