@@ -205,6 +205,8 @@ class JavascriptCommand(sublime_plugin.EventListener):
 
 		def recursive(root, path, full_path = ''):
 			# init
+			if full_path.find('node_modules') != -1 or full_path.find('dist') != -1 or full_path.find('build') != -1:
+				return
 			if full_path == '':
 				folder = os.listdir(root)
 			else:
