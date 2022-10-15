@@ -4,7 +4,8 @@ import sublime_plugin
 from .completions import completions
 from .completion.string import string
 from .completion.console import console
-from .completion.array import array
+from .completion.array import array, array_prototype
+from .completion.date import date_prototype
 from .completion.keyword import keyword
 
 class JavascriptCommand(sublime_plugin.EventListener):
@@ -71,6 +72,10 @@ class JavascriptCommand(sublime_plugin.EventListener):
 				target = string
 			elif name_variable.startswith("{"):
 				pass
+			elif name_variable == 'Array':
+				target = array_prototype
+			elif name_variable == 'Date':
+				target = date_prototype
 			else:
 				assign = []
 				checked = re.search(r"[a-zA-Z0-0]+$", name_variable)
@@ -92,7 +97,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 									assign = assign + [
 										sublime.CompletionItem(
 											value,
-											annotation=value,
+											annotation="key",
 											completion=value,
 											completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 											kind=sublime.KIND_VARIABLE
@@ -101,9 +106,11 @@ class JavascriptCommand(sublime_plugin.EventListener):
 							# string
 							if re.search(r"{name} = '".format(name=name_variable), in_line[x]):
 								target = string
+								continue
 							# array
 							if re.search(r"{name} = \[".format(name=name_variable), in_line[x]):
 								target = array
+								continue
 							# object
 							if re.search(r"{name} = {t}".format(name=name_variable, t='{'), in_line[x]):
 								def recursive(in_line, x, start):
@@ -152,6 +159,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 								result = recursive(in_line, x, x)
 								if result and len(result):
 									out.extend(result)
+									continue
 
 							# function
 							if re.search(r"function {name}\(".format(name=name_variable), in_line[x]):
@@ -171,6 +179,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 										kind=sublime.KIND_VARIABLE
 									),
 								]
+								continue
 					
 					target = assign + target
 		else:

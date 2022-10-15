@@ -100,3 +100,27 @@ array = [
 		kind=sublime.KIND_FUNCTION
 	),
 ]
+
+array_prototype = [
+	sublime.CompletionItem(
+		"from",
+		annotation="array",
+		completion="from(name)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
+		"isarray",
+		annotation="array",
+		completion="isArray(name)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+	sublime.CompletionItem(
+		"of",
+		annotation="array",
+		completion="of(data)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_FUNCTION
+	),
+]
