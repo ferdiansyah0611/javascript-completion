@@ -23,27 +23,6 @@ more = [
 		kind=sublime.KIND_SNIPPET
 	),
 	sublime.CompletionItem(
-		"alert",
-		annotation="alert",
-		completion="alert($0)",
-		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
-	),
-	sublime.CompletionItem(
-		"confirm",
-		annotation="confirm",
-		completion="confirm($0)",
-		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
-	),
-	sublime.CompletionItem(
-		"prompt",
-		annotation="prompt",
-		completion="prompt($0)",
-		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
-	),
-	sublime.CompletionItem(
 		"json",
 		annotation="JSON.parse",
 		completion="JSON.parse(object$0)",
@@ -76,14 +55,28 @@ more = [
 		annotation="setInterval",
 		completion="setInterval(() => {\n\t$0\n})",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
+		kind=sublime.KIND_SNIPPET
 	),
 	sublime.CompletionItem(
 		"settimeout",
 		annotation="setTimeout",
 		completion="setTimeout(() => {\n\t$0\n})",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_FUNCTION
+		kind=sublime.KIND_SNIPPET
+	),
+	sublime.CompletionItem(
+		"clearinterval",
+		annotation="clearInterval",
+		completion="clearInterval($0)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_SNIPPET
+	),
+	sublime.CompletionItem(
+		"cleartimeout",
+		annotation="clearTimeout",
+		completion="clearTimeout($0)",
+		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+		kind=sublime.KIND_SNIPPET
 	),
 	sublime.CompletionItem(
 		"fetch",
@@ -130,7 +123,7 @@ more = [
 	sublime.CompletionItem(
 		"export",
 		annotation="export es6",
-		completion="export default name$0;",
+		completion="export default $0;",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 		kind=sublime.KIND_SNIPPET
 	),

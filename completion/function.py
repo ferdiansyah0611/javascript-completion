@@ -18,14 +18,14 @@ function = [
 	sublime.CompletionItem(
 		"fn",
 		annotation="arrow function",
-		completion="let name$0 = (arguments) => {}",
+		completion="(arguments) => {}",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 		kind=sublime.KIND_SNIPPET
 	),
 	sublime.CompletionItem(
 		"fn",
 		annotation="async arrow function",
-		completion="let name$0 = async (arguments) => {}",
+		completion="async (arguments) => {}",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 		kind=sublime.KIND_SNIPPET
 	),

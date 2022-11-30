@@ -7,10 +7,14 @@ from .completion.console import console
 from .completion.array import array, array_prototype
 from .completion.date import date_prototype
 from .completion.keyword import keyword
+from .dataset.dom import dom
+from .dataset.window import window
 
 class JavascriptCommand(sublime_plugin.EventListener):
 	folder = ''
 	path = ''
+	def __init__(self):
+		self.global_completions = [("%s \tDOM" % s, s) for s in dom] + [("%s \tWindow" % s, s) for s in window]
 	def on_query_completions(self, view, prefix, locations):
 		source 		= [
 			view.match_selector(locations[0], "source.js"),
@@ -34,7 +38,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		target 		= []
 		in_line  	= line.split('\n')
 		last_line 	= in_line[-1]
-
+		on_string 	= view.match_selector(locations[0], "meta.string.js")
 		# suggest import
 		if len(path) and (prefix == 'import' or prefix == 'require'):
 			self.path 	= path[0]
@@ -55,13 +59,21 @@ class JavascriptCommand(sublime_plugin.EventListener):
 				file 	= self.import_file(self.path, prefix)
 				target 	= file + dev
 
+		# bdd
+		if '// bdd' in in_line[0:2]:
+			from .completion.bdd import bdd
+			target = bdd + target
+
 		# not ctrl+space
 		if prefix != '':
-			target = target + keyword + completions + console
+			if on_string == False:
+				target = target + completions + keyword + console + string + array + array_prototype + self.global_completions
 			# typescript
 			if source[2] == True or source[3] == True:
 				from .completion.typescript import typescript
 				target = typescript + target
+
+			return target
 
 		# end with dot
 		elif last_line.endswith('.'):
@@ -77,118 +89,10 @@ class JavascriptCommand(sublime_plugin.EventListener):
 			elif name_variable == 'Date':
 				target = date_prototype
 			else:
-				assign = []
-				checked = re.search(r"[a-zA-Z0-0]+$", name_variable)
-				if checked:
-					name_variable = checked.group()
-					if name_variable:
-						for x in range(0, len(in_line)):
-							# check value assign
-							expect = re.search(r"{name}\.[a-zA-Z]+".format(name=name_variable), in_line[x])
-							if expect:
-								value = expect.group()
-								# unique completion
-								is_allow = True
-								for y in assign:
-									if y.completion == value:
-										is_allow = False
-								
-								if is_allow:
-									assign = assign + [
-										sublime.CompletionItem(
-											value,
-											annotation="key",
-											completion=value,
-											completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-											kind=sublime.KIND_VARIABLE
-										)
-									]
-							# string
-							if re.search(r"{name} = '".format(name=name_variable), in_line[x]):
-								target = string
-								continue
-							# array
-							if re.search(r"{name} = \[".format(name=name_variable), in_line[x]):
-								target = array
-								continue
-							# object
-							if re.search(r"{name} = {t}".format(name=name_variable, t='{'), in_line[x]):
-								def recursive(in_line, x, start):
-									try:
-										if x > len(in_line): return
-										if in_line[x].find('};') == -1:
-											return recursive(in_line, x + 1, start)
-										else:
-											import json
-											first 	= in_line[start].split(' ')[-1]
-											text 	= ''
-											text 	+= first
-
-											for y in range(start + 1, x):
-												text += in_line[y]
-
-											text 	+= '}'
-											text 	= text.strip().replace('\t', '').replace('{', '{"').replace(':', '":').replace(',', ',"').replace("'", '"')
-											result 	= json.loads(text)
-											out 	= []
-
-											# make completion include sub object
-											def reading(dictionary, left = ''):
-												for key in dictionary:
-													if type(dictionary[key]) == dict:
-														if left != '': left = left + '.'
-														reading(dictionary[key], left + key)
-													else:
-														text = key
-														if left != '':
-															text = left + '.' + key
-
-														out.append(sublime.CompletionItem(
-															text,
-															annotation="key",
-															completion=text,
-															completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-															kind=sublime.KIND_VARIABLE
-														))
-
-											reading(result)
-											return out
-									except:
-										pass
-
-								result = recursive(in_line, x, x)
-								if result and len(result):
-									out.extend(result)
-									continue
-
-							# function
-							if re.search(r"function {name}\(".format(name=name_variable), in_line[x]):
-								target = [
-									sublime.CompletionItem(
-										"prototype",
-										annotation="prototype",
-										completion="prototype",
-										completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-										kind=sublime.KIND_VARIABLE
-									),
-									sublime.CompletionItem(
-										"constructor",
-										annotation="constructor",
-										completion="constructor",
-										completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-										kind=sublime.KIND_VARIABLE
-									),
-								]
-								continue
-					
-					target = assign + target
+				return array + array_prototype + string + date_prototype + self.global_completions
 		else:
-			target = keyword + completions
-
-		# bdd
-		if '// bdd' in in_line[0:2]:
-			from .completion.bdd import bdd
-			target = bdd + target
+			if on_string == False:
+				target = keyword + completions
 
 		for comp in target:
 			if comp and comp.trigger.find(r'{prefix}'):

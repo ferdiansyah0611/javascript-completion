@@ -17,6 +17,7 @@ Javascript Completion for Sublime Text 3/4. Work in file js, jsx, ts, and tsx.
 - suggestion for importing (file, dependencies)
 - completion key in object
 - keyword
+- window, dom
 
 ## Usage
 
