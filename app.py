@@ -39,7 +39,10 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		in_line  	= line.split('\n')
 		last_line 	= in_line[-1]
 		on_string 	= view.match_selector(locations[0], "meta.string.js")
+		on_tag_js 	= view.match_selector(locations[0], "meta.tag.attributes.js")
 		# suggest import
+		if on_tag_js:
+			return out
 		if len(path) and (prefix == 'import' or prefix == 'require'):
 			self.path 	= path[0]
 			self.full_name = current
