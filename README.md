@@ -18,6 +18,7 @@ Javascript Completion for Sublime Text 3/4. Work in file js, jsx, ts, and tsx.
 - completion key in object
 - keyword
 - window, dom
+- interface
 
 ## Usage
 
@@ -34,6 +35,10 @@ To appear suggestion file or dependencies, try like this:
 `require` then `ctrl+space`
 
 `from` then `ctrl+space`
+
+## About Interface
+
+By default is disabled, to enable you must add comment `// int` on line 0/1/2/3/4/5.
 
 ## Completion key in Object
 

@@ -66,6 +66,10 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		if '// bdd' in in_line[0:2]:
 			from .completion.bdd import bdd
 			target = bdd + target
+		# bdd
+		if '// int' in in_line[0:5]:
+			from .dataset.interface import interface
+			target = target + [("%s \tInterface" % s, s) for s in interface]
 
 		# not ctrl+space
 		if prefix != '':
