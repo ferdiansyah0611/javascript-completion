@@ -91,6 +91,10 @@ class JavascriptCommand(sublime_plugin.EventListener):
 				target = array_prototype
 			elif name_variable == 'Date':
 				target = date_prototype
+			elif name_variable == 'Math':
+				from .dataset.math import math, constant
+				target = [("%s \tMath" % s, s) for s in constant] + [("%s \tMath" % s, s + "()") for s in math]
+				return target
 			else:
 				return array + array_prototype + string + date_prototype + self.global_completions
 		else:
