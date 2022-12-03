@@ -40,9 +40,10 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		last_line 	= in_line[-1]
 		on_string 	= view.match_selector(locations[0], "meta.string.js")
 		on_tag_js 	= view.match_selector(locations[0], "meta.tag.attributes.js")
-		# suggest import
-		if on_tag_js:
+		on_comment 	= view.match_selector(locations[0], "comment.line.double-slash.js")
+		if on_tag_js or on_comment:
 			return out
+		# suggest import
 		if len(path) and (prefix == 'import' or prefix == 'require'):
 			self.path 	= path[0]
 			self.full_name = current
@@ -85,6 +86,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		# end with dot
 		elif last_line.endswith('.'):
 			name_variable = last_line.split(' ')[-1][:-1]
+			print(name_variable)
 			if name_variable.startswith('['):
 				target = array
 			elif name_variable.startswith("'") or name_variable.startswith('"'):
@@ -99,8 +101,39 @@ class JavascriptCommand(sublime_plugin.EventListener):
 				from .dataset.math import math, constant
 				target = [("%s \tMath" % s, s) for s in constant] + [("%s \tMath" % s, s + "()") for s in math]
 				return target
+			elif name_variable == 'process':
+				from .dataset.process import process
+				target = [("%s \tprocess" % s, s) for s in process]
+				return target
+			elif name_variable == 'performance':
+				from .dataset.performance import performance
+				target = [("%s \tperformance" % s, s) for s in performance]
+				return target
 			else:
-				return array + array_prototype + string + date_prototype + self.global_completions
+				valid = {
+					"fs": search_reference_module(in_line, "fs"),
+					"os": search_reference_module(in_line, "os"),
+					"path": search_reference_module(in_line, "path"),
+					"assert": search_reference_module(in_line, "assert"),
+				}
+				if valid['fs'] == name_variable:
+					from .dataset.fs import fs
+					target = [("%s \tfilesystem" % s, s) for s in fs]
+					return target
+				elif valid['os'] == name_variable:
+					from .dataset.os import os_data
+					target = [("%s \tos" % s, s) for s in os_data]
+					return target
+				elif valid['path'] == name_variable:
+					from .dataset.paths import paths
+					target = [("%s \tpath" % s, s) for s in paths]
+					return target
+				elif valid['assert'] == name_variable:
+					from .dataset.assertion import assertion
+					target = [("%s \tassert" % s, s) for s in assertion]
+					return target
+				else:
+					return array + array_prototype + string + date_prototype + self.global_completions
 		else:
 			if on_string == False:
 				target = keyword + completions
@@ -198,3 +231,14 @@ class JavascriptCommand(sublime_plugin.EventListener):
 			return out
 		except:
 			return []
+
+def search_reference_module(line, module_name):
+	name_variable = ""
+	position = 0
+	for text in line:
+		if position > 100: break
+		check = re.search(r"(var|let|const) ([a-zA-Z]+) = require\((\'|\"){0}(\'|\")\)".format(module_name), text)
+		if check:
+			name_variable = check.groups()[1]
+		position += 1
+	return name_variable

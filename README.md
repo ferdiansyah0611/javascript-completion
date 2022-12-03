@@ -19,6 +19,7 @@ Javascript Completion for Sublime Text 3/4. Work in file js, jsx, ts, and tsx.
 - keyword
 - window, dom
 - interface
+- fs, path, performance, math, process, os, assert
 
 ## Usage
 
