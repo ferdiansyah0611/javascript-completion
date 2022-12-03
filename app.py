@@ -75,7 +75,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		# not ctrl+space
 		if prefix != '':
 			if on_string == False:
-				target = target + completions + keyword + console + string + array + array_prototype + self.global_completions
+				target = target + completions + keyword + console + string + array + self.global_completions
 			# typescript
 			if source[2] == True or source[3] == True:
 				from .completion.typescript import typescript
@@ -86,54 +86,66 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		# end with dot
 		elif last_line.endswith('.'):
 			name_variable = last_line.split(' ')[-1][:-1]
-			print(name_variable)
-			if name_variable.startswith('['):
-				target = array
-			elif name_variable.startswith("'") or name_variable.startswith('"'):
-				target = string
-			elif name_variable.startswith("{"):
-				pass
-			elif name_variable == 'Array':
-				target = array_prototype
-			elif name_variable == 'Date':
-				target = date_prototype
-			elif name_variable == 'Math':
-				from .dataset.math import math, constant
-				target = [("%s \tMath" % s, s) for s in constant] + [("%s \tMath" % s, s + "()") for s in math]
-				return target
-			elif name_variable == 'process':
-				from .dataset.process import process
-				target = [("%s \tprocess" % s, s) for s in process]
-				return target
-			elif name_variable == 'performance':
-				from .dataset.performance import performance
-				target = [("%s \tperformance" % s, s) for s in performance]
-				return target
-			else:
-				valid = {
-					"fs": search_reference_module(in_line, "fs"),
-					"os": search_reference_module(in_line, "os"),
-					"path": search_reference_module(in_line, "path"),
-					"assert": search_reference_module(in_line, "assert"),
-				}
-				if valid['fs'] == name_variable:
-					from .dataset.fs import fs
-					target = [("%s \tfilesystem" % s, s) for s in fs]
+			start_fn = name_variable.find("(")
+			if start_fn:
+				name_variable = name_variable[name_variable.find("(") + 1:len(name_variable)]
+			if re.search(r"[a-zA-Z]+", name_variable):
+				value_variable = search_reference_variable(in_line, name_variable)
+				if name_variable.startswith('['): return array
+				elif name_variable.startswith("'") or name_variable.startswith('"'): return string
+				elif name_variable.startswith("{"): return
+				elif name_variable == 'Array': return array_prototype
+				elif name_variable == 'Date': return date_prototype
+				elif name_variable == 'Math':
+					from .dataset.math import math, constant
+					target = [("%s \tMath" % s, s) for s in constant] + [("%s \tMath" % s, s + "()") for s in math]
 					return target
-				elif valid['os'] == name_variable:
-					from .dataset.os import os_data
-					target = [("%s \tos" % s, s) for s in os_data]
+				elif name_variable == 'process':
+					from .dataset.process import process
+					target = [("%s \tprocess" % s, s) for s in process]
 					return target
-				elif valid['path'] == name_variable:
-					from .dataset.paths import paths
-					target = [("%s \tpath" % s, s) for s in paths]
+				elif name_variable == 'performance':
+					from .dataset.performance import performance
+					target = [("%s \tperformance" % s, s) for s in performance]
 					return target
-				elif valid['assert'] == name_variable:
-					from .dataset.assertion import assertion
-					target = [("%s \tassert" % s, s) for s in assertion]
+				elif name_variable == 'Buffer':
+					from .dataset.buffer import buffer
+					target = [("%s \tbuffer" % s, s) for s in buffer]
+					return target
+				elif value_variable.startswith('Buffer.'):
+					from .dataset.buffer import objects_buffer
+					target = [("%s \tbuffer" % s, s) for s in objects_buffer]
 					return target
 				else:
-					return array + array_prototype + string + date_prototype + self.global_completions
+					allowed = ["fs", "os", "path", "assert", "util"]
+					active_module = ""
+					for x in allowed:
+						if value_variable.find(x) >= 0:
+							active_module = x
+							break
+					if active_module:
+						if active_module == "fs":
+							from .dataset.fs import fs
+							target = [("%s \tfilesystem" % s, s) for s in fs]
+							return target
+						elif active_module == "os":
+							from .dataset.os import os_data
+							target = [("%s \tos" % s, s) for s in os_data]
+							return target
+						elif active_module == "path":
+							from .dataset.paths import paths
+							target = [("%s \tpath" % s, s) for s in paths]
+							return target
+						elif active_module == "assert":
+							from .dataset.assertion import assertion
+							target = [("%s \tassert" % s, s) for s in assertion]
+							return target
+						elif active_module == "util":
+							from .dataset.utils import utils
+							target = [("%s \tutil" % s, s) for s in utils]
+							return target
+					else:
+						return array + string + self.global_completions
 		else:
 			if on_string == False:
 				target = keyword + completions
@@ -232,13 +244,14 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		except:
 			return []
 
-def search_reference_module(line, module_name):
-	name_variable = ""
+def search_reference_variable(line, name_variable):
+	line.reverse()
+	value = ""
 	position = 0
 	for text in line:
 		if position > 100: break
-		check = re.search(r"(var|let|const) ([a-zA-Z]+) = require\((\'|\"){0}(\'|\")\)".format(module_name), text)
+		check = re.search(r"(var|let|const) {0} = (.+)".format(name_variable), text)
 		if check:
-			name_variable = check.groups()[1]
-		position += 1
-	return name_variable
+			value = check.groups()[1]
+			break
+	return value
