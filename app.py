@@ -40,7 +40,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		last_line 	= in_line[-1]
 		on_string 	= view.match_selector(locations[0], "meta.string.js")
 		on_tag_js 	= view.match_selector(locations[0], "meta.tag.attributes.js")
-		on_comment 	= view.match_selector(locations[0], "comment.line.double-slash.js")
+		on_comment 	= view.match_selector(locations[0], "comment.line.double-slash.js") or view.match_selector(locations[0], "comment.block.js")
 		if on_tag_js or on_comment:
 			return out
 		# suggest import
@@ -67,7 +67,7 @@ class JavascriptCommand(sublime_plugin.EventListener):
 		if '// bdd' in in_line[0:2]:
 			from .completion.bdd import bdd
 			target = bdd + target
-		# bdd
+		# interface
 		if '// int' in in_line[0:5]:
 			from .dataset.interface import interface
 			target = target + [("%s \tInterface" % s, s) for s in interface]
@@ -89,12 +89,19 @@ class JavascriptCommand(sublime_plugin.EventListener):
 			start_fn = name_variable.find("(")
 			if start_fn:
 				name_variable = name_variable[name_variable.find("(") + 1:len(name_variable)]
-			if re.search(r"[a-zA-Z]+", name_variable):
+			valid = [
+				name_variable.startswith('['),
+				name_variable.startswith("'") or name_variable.startswith('"'),
+				name_variable.startswith("{")
+			]
+			if re.search(r"[a-zA-Z]+", name_variable) or True in valid:
+				# symbol
+				if valid[0]: return array
+				elif valid[1]: return string
+				elif valid[2]: return []
+				# string var
 				value_variable = search_reference_variable(in_line, name_variable)
-				if name_variable.startswith('['): return array
-				elif name_variable.startswith("'") or name_variable.startswith('"'): return string
-				elif name_variable.startswith("{"): return
-				elif name_variable == 'Array': return array_prototype
+				if name_variable == 'Array': return array_prototype
 				elif name_variable == 'Date': return date_prototype
 				elif name_variable == 'Math':
 					from .dataset.math import math, constant
