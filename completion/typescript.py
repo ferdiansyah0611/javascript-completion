@@ -1,7 +1,6 @@
 import sublime
 
-typescript = []
-text = [
+typescript = [
     "any",
     "string",
     "number",
@@ -21,11 +20,13 @@ text = [
     "abstract"
 ]
 
-for x in text:
-	typescript.append(sublime.CompletionItem(
-		x,
-		annotation=x,
-		completion=x,
+def update(text):
+	return sublime.CompletionItem(
+		text,
+		annotation=text,
+		completion=text,
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 		kind=sublime.KIND_KEYWORD
-	))
+	)
+
+typescript = list(map(update, typescript))

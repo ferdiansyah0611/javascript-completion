@@ -105,21 +105,21 @@ array_prototype = [
 	sublime.CompletionItem(
 		"from",
 		annotation="array",
-		completion="from(name)",
+		completion="from($0)",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
 		"isarray",
 		annotation="array",
-		completion="isArray(name)",
+		completion="isArray($0)",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 		kind=sublime.KIND_FUNCTION
 	),
 	sublime.CompletionItem(
 		"of",
 		annotation="array",
-		completion="of(data)",
+		completion="of($0)",
 		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
 		kind=sublime.KIND_FUNCTION
 	),

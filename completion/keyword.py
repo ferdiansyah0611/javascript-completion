@@ -1,7 +1,6 @@
 import sublime
 
-keyword = []
-text = [
+keyword = [
     "async",
     "await",
     "break",
@@ -46,11 +45,13 @@ text = [
     "process"
 ]
 
-for x in text:
-	keyword.append(sublime.CompletionItem(
-		x,
-		annotation=x,
-		completion=x,
-		completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
-		kind=sublime.KIND_KEYWORD
-	))
+def update(text):
+    return sublime.CompletionItem(
+        text,
+        annotation=text,
+        completion=text,
+        completion_format=sublime.COMPLETION_FORMAT_SNIPPET,
+        kind=sublime.KIND_KEYWORD
+    )
+
+keyword = list(map(update, keyword))
